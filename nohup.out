@@ -1,0 +1,29 @@
+/home/abdosaad/.local/lib/python3.10/site-packages/torch/cuda/__init__.py:611: UserWarning: Can't initialize NVML
+  warnings.warn("Can't initialize NVML")
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+INFO:root:Reading encoded data from ./data/multi-woz-processed/new_db_se_blank_encoded.data.json
+INFO:root:train size:8434, dev size:999, test size:1000
+vocab file loaded from "./data/multi-woz-processed/vocab"
+Vocabulary size including oov: 6328
+Traceback (most recent call last):
+  File "/home/abdosaad/Desktop/UBAR-MultiWOZ-master/train.py", line 789, in <module>
+    main()
+  File "/home/abdosaad/Desktop/UBAR-MultiWOZ-master/train.py", line 754, in main
+    m = Modal(device)
+  File "/home/abdosaad/Desktop/UBAR-MultiWOZ-master/train.py", line 44, in __init__
+    self.model.to(self.device)  # single gpu
+  File "/home/abdosaad/.local/lib/python3.10/site-packages/transformers/modeling_utils.py", line 2597, in to
+    return super().to(*args, **kwargs)
+  File "/home/abdosaad/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1160, in to
+    return self._apply(convert)
+  File "/home/abdosaad/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 810, in _apply
+    module._apply(fn)
+  File "/home/abdosaad/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 810, in _apply
+    module._apply(fn)
+  File "/home/abdosaad/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 833, in _apply
+    param_applied = fn(param)
+  File "/home/abdosaad/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1158, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+  File "/home/abdosaad/.local/lib/python3.10/site-packages/torch/cuda/__init__.py", line 298, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
