@@ -1,1 +1,4 @@
 Django==3.2.10
+tokenizers==0.15.1
+torch==2.2.0
+transformers==4.37.2
