@@ -5,4 +5,4 @@ transformers==4.37.2
 nltk==3.8.1
 numpy==1.18.0
 spacy==3.7.2
-tensorboard==2.15.1
+tensorboard==2.6.0
