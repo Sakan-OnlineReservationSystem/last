@@ -3,6 +3,6 @@ tokenizers==0.15.1
 torch==2.2.0
 transformers==4.37.2
 nltk==3.8.1
-numpy==1.26.3
+numpy==0.0.1
 spacy==3.7.2
 tensorboard==2.15.1
