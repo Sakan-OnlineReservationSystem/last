@@ -36,11 +36,13 @@ class Modal(object):
         # cfg.tokenizer = tokenizer
 
         # initialize multiwoz reader
-	self.reader = MultiWozReader(self.tokenizer)
-	output_path = './chatbotModel/'  # Specify the local path where you want to save the file
-	gdown.download("https://drive.google.com/file/d/1WaINRqDqaU2k7U75643qmPKDI3fJBmIG/view?usp=sharing", output_path, quiet=False)
-        # create model: gpt2
-        self.model = GPT2LMHeadModel.from_pretrained(output_path)
+        self.reader = MultiWozReader(self.tokenizer)
+        output_path = './chatbotModel/'
+        gdown.download("https://drive.google.com/file/d/1WaINRqDqaU2k7U75643qmPKDI3fJBmIG/view?usp=sharing", output_path, quiet=False)
+
+
+# create model: gpt2
+        self.model = GPT2LMHeadModel.from_pretrained("https://drive.google.com/drive/folders/110CYvvCV74gt-IESnG6jloHhaNDG7zOZ?usp=sharing")
         if cfg.mode == 'train':
             self.model.resize_token_embeddings(len(self.tokenizer))
         self.model.to(self.device)  # single gpu
