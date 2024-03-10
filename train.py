@@ -1,10 +1,7 @@
 from transformers.optimization import AdamW, get_linear_schedule_with_warmup
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, GPT2Model
 from eval import MultiWozEvaluator
-from damd_net import DAMD, cuda_, get_one_hot_input
 from reader import MultiWozReader
-import utils
-from torch.optim import Adam
 import torch
 import torch.nn as nn
 
@@ -14,10 +11,7 @@ import argparse
 import time
 import logging
 import json
-import tqdm
 import numpy as np
-from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
 import gdown
 
 from config import global_config as cfg 
@@ -49,10 +43,7 @@ class Modal(object):
 
         #
         self.evaluator = MultiWozEvaluator(self.reader)
-        if cfg.save_log and cfg.mode == 'train':
-            self.tb_writer = SummaryWriter(log_dir='./log')
-        else:
-            self.tb_writer = None
+        self.tb_writer = None
 
     def get_optimizers(self):
         """
