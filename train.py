@@ -36,8 +36,7 @@ class Modal(object):
         # cfg.tokenizer = tokenizer
 
         # initialize multiwoz reader
-        self.reader = MultiWozReader(self.tokenizer)
-	
+	self.reader = MultiWozReader(self.tokenizer)
 	output_path = './chatbotModel/'  # Specify the local path where you want to save the file
 	gdown.download("https://drive.google.com/file/d/1WaINRqDqaU2k7U75643qmPKDI3fJBmIG/view?usp=sharing", output_path, quiet=False)
         # create model: gpt2
