@@ -18,6 +18,7 @@ import tqdm
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
+import gdown
 
 from config import global_config as cfg 
 # from config21 import global_config as cfg  # global, already initialized
@@ -36,9 +37,11 @@ class Modal(object):
 
         # initialize multiwoz reader
         self.reader = MultiWozReader(self.tokenizer)
-
+	
+	output_path = './chatbotModel/'  # Specify the local path where you want to save the file
+	gdown.download("https://drive.google.com/file/d/1WaINRqDqaU2k7U75643qmPKDI3fJBmIG/view?usp=sharing", output_path, quiet=False)
         # create model: gpt2
-        self.model = GPT2LMHeadModel.from_pretrained(cfg.gpt_path)
+        self.model = GPT2LMHeadModel.from_pretrained(output_path)
         if cfg.mode == 'train':
             self.model.resize_token_embeddings(len(self.tokenizer))
         self.model.to(self.device)  # single gpu
