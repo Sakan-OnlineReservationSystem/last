@@ -26,14 +26,30 @@ class Modal(object):
     def __init__(self, device):
         self.device = device
         # initialize tokenizer
+        output_path = cfg.gpt_path + "/pytorch_model.bin"
+        download_url = "https://drive.google.com/uc?id=1WaINRqDqaU2k7U75643qmPKDI3fJBmIG"
+
+        # Ensure the cfg.gpt_path directory exists
+        if not os.path.exists(cfg.gpt_path):
+            os.makedirs(cfg.gpt_path)
+        
+        # Attempt to download the file
+        try:
+            gdown.download(download_url, output_path, quiet=False)
+            # Check if the file is downloaded successfully
+            if not os.path.isfile(output_path):
+                raise FileNotFoundError(f"Download failed, file not found: {output_path}")
+        except Exception as e:
+            print(f"Failed to download the file: {e}")
+            # Handle the failure as appropriate (retry, exit, etc.)
+            return
+
         self.tokenizer = GPT2Tokenizer.from_pretrained(cfg.gpt_path)
         # cfg.tokenizer = tokenizer
 
         # initialize multiwoz reader
         self.reader = MultiWozReader(self.tokenizer)
-        output_path = './chatbotModel/'
-        gdown.download("https://drive.google.com/file/d/1WaINRqDqaU2k7U75643qmPKDI3fJBmIG/view?usp=sharing", output_path, quiet=False)
-
+        
 
         # create model: gpt2
         self.model = GPT2LMHeadModel.from_pretrained(output_path)
@@ -609,6 +625,7 @@ class Modal(object):
             eos_b_idx = len(generated)-1
         return generated[: eos_b_idx+1]
 
+
 def parse_arg_cfg(args):
     # add args to cfg
     if args.cfg:
@@ -650,28 +667,21 @@ def start():
     cfg.gpt_path = cfg.eval_load_path
 
     cfg._init_logging_handler(args.mode)
+    device = torch.device('cpu')
+    logging.info('Device: {}'.format(format(device)))
     
     # fix random seed
     torch.manual_seed(cfg.seed)
     torch.cuda.manual_seed(cfg.seed)
     random.seed(cfg.seed)
     np.random.seed(cfg.seed)
-    device = torch.device('cpu')
-    logging.info('Device: {}'.format(format(device)))
     # initialize model
     m = Modal(device)
-
-    
-    logging.info("Generate setting: \n\t use true_prev_bspn={} \n\t use true_prev_aspn={} \n\t use true_db_pointer={} \n\t use true_prev_resp={} \n\t use true_curr_bspn={} \n\t use true_curr_aspn={} \n\t use_all_previous_context={}".format(
-            cfg.use_true_prev_bspn, cfg.use_true_prev_aspn, cfg.use_true_db_pointer, cfg.use_true_prev_resp,
-            cfg.use_true_curr_bspn, cfg.use_true_curr_aspn, cfg.use_all_previous_context
-        ))
-
 
 def validate(mystring):
     return m.validate(mystring = mystring)
 
-
-
+device = torch.device('cpu')
+m = None 
 if __name__ == "__main__":
     start()
