@@ -630,7 +630,8 @@ def parse_arg_cfg(args):
 
 
 def start():
-    
+    global device
+    global m
     if not os.path.exists('./experiments'):
         os.mkdir('./experiments')
 
@@ -655,6 +656,10 @@ def start():
     torch.cuda.manual_seed(cfg.seed)
     random.seed(cfg.seed)
     np.random.seed(cfg.seed)
+    device = torch.device('cpu')
+    logging.info('Device: {}'.format(format(device)))
+    # initialize model
+    m = Modal(device)
 
     
     logging.info("Generate setting: \n\t use true_prev_bspn={} \n\t use true_prev_aspn={} \n\t use true_db_pointer={} \n\t use true_prev_resp={} \n\t use true_curr_bspn={} \n\t use true_curr_aspn={} \n\t use_all_previous_context={}".format(
@@ -665,12 +670,8 @@ def start():
 
 def validate(mystring):
     return m.validate(mystring = mystring)
-global device
-global m
-device = torch.device('cpu')
-logging.info('Device: {}'.format(format(device)))
-# initialize model
-m = Modal(device)
+
+
 
 if __name__ == "__main__":
     start()
