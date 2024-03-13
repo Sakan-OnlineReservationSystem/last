@@ -9,7 +9,7 @@ app.get('/:message', async (req, res) => {
   try {
     const mystring = req.params.message; // Extract the 'message' parameter from the URL
     const pvturn, res ,bspn , aspn = await np.validate(mystring); // Assuming 'validate' is a method in your Python class
-    console.log(result); // Log the validation result
+    console.log(res); // Log the validation result
     res.send(result); // Send the result back to the client
   } catch (error) {
     console.error('Error:', error.message);
