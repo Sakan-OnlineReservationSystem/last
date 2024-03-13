@@ -631,6 +631,7 @@ def parse_arg_cfg(args):
 
 def start():
     global device
+    global m
     if not os.path.exists('./experiments'):
         os.mkdir('./experiments')
 
@@ -667,7 +668,8 @@ def start():
         ))
 
 
-
+def validate(mystring):
+    return m.validate(mystring = mystring)
 
 if __name__ == "__main__":
     start()
