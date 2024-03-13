@@ -558,8 +558,14 @@ class Modal(object):
         #print(self.tokenizer.decode(pv_turn['bspn']))
         pv_turn['db'] = turn['db'] if cfg.use_true_curr_bspn else db
         pv_turn['aspn'] = turn['aspn'] if cfg.use_true_prev_aspn else decoded['aspn']
-        #print(pv_turn)
-        return pv_turn, res , bspn ,aspn
+        result = {
+            'pv_turn': pv_turn,
+            'response': res,
+            'bspn': bspn,
+            'aspn': aspn
+        }
+             
+        return result
 
     def decode_generated_act_resp(self, generated):
         """
