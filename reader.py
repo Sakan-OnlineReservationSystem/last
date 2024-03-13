@@ -472,77 +472,7 @@ class MultiWozReader(_ReaderBase):
         """
         load processed data and encode, or load already encoded data
         """
-	    
-        return
-	if save_temp: # save encoded data
-            if 'all' in cfg.exp_domains:
-                encoded_file = os.path.join(cfg.data_path, 'new_db_se_blank_encoded.data.json') 
-                # encoded: no sos, se_encoded: sos and eos
-                # db: add db results every turn
-            else:
-                xdomain_dir = './experiments_Xdomain/data'
-                if not os.path.exists(xdomain_dir):
-                    os.makedirs(xdomain_dir)
-                encoded_file = os.path.join(xdomain_dir, '{}-encoded.data.json'.format('-'.join(cfg.exp_domains))) 
-
-            if os.path.exists(encoded_file):
-                logging.info('Reading encoded data from {}'.format(encoded_file))
-                self.data = json.loads(
-                    open(cfg.data_path+cfg.data_file, 'r', encoding='utf-8').read().lower())
-                encoded_data = json.loads(open(encoded_file, 'r', encoding='utf-8').read())
-                self.train = encoded_data['train']
-                self.dev = encoded_data['dev']
-                self.test = encoded_data['test']
-            else:
-                logging.info('Encoding data now and save the encoded data in {}'.format(encoded_file))
-                # not exists, encode data and save
-                #
-                output_path = './chatbotModel/'
-        	gdown.download("https://drive.google.com/file/d/1spkaxn4xp5RLhVOLbloNJltz9IiR28jC/view?usp=sharing", output_path, quiet=False)
-
-
-                self.data = json.loads(
-                    open(output_path+cfg.data_file, 'r', encoding='utf-8').read().lower())
-                self.train, self.dev, self.test = [], [], []
-                for fn, dial in self.data.items():
-                    if '.json' in fn:
-                        fn = fn.replace('.json', '')
-                    if 'all' in cfg.exp_domains or self.exp_files.get(fn):
-                        if self.dev_files.get(fn):
-                            self.dev.append(self._get_encoded_data(fn, dial))
-                        elif self.test_files.get(fn):
-                            self.test.append(self._get_encoded_data(fn, dial))
-                        else:
-                            self.train.append(self._get_encoded_data(fn, dial))
-                
-                # save encoded data
-                encoded_data = {'train': self.train, 'dev': self.dev, 'test': self.test}
-                json.dump(encoded_data, open(encoded_file, 'w'), indent=2)
-        
-        else: # directly read processed data and encode
-            self.data = json.loads(
-                open(cfg.data_path+cfg.data_file, 'r', encoding='utf-8').read().lower())
-            self.train, self.dev, self.test = [], [], []
-            for fn, dial in self.data.items():
-                if '.json' in fn:
-                    fn = fn.replace('.json', '')
-                if 'all' in cfg.exp_domains or self.exp_files.get(fn):
-                    if self.dev_files.get(fn):
-                        self.dev.append(self._get_encoded_data(fn, dial))
-                    elif self.test_files.get(fn):
-                        self.test.append(self._get_encoded_data(fn, dial))
-                    else:
-                        self.train.append(self._get_encoded_data(fn, dial))
-        # if save_temp:
-        #     json.dump(self.test, open(
-        #         'data/multi-woz-analysis/test.encoded.json', 'w'), indent=2)
-        #     self.vocab.save_vocab('data/multi-woz-analysis/vocab_temp')
-
-        random.shuffle(self.train)
-        # random.shuffle(self.dev)
-        # random.shuffle(self.test)
-        logging.info('train size:{}, dev size:{}, test size:{}'.format(len(self.train), len(self.dev), len(self.test)))
-
+	
     def _get_encoded_data(self, fn, dial):
         encoded_dial = []
         for idx, t in enumerate(dial['log']):  # tokenize to list of ids
