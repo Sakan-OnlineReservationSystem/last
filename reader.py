@@ -7,6 +7,8 @@ import json
 import spacy
 import utils
 import ontology
+import gdown
+
 from copy import deepcopy
 from collections import OrderedDict
 from db_ops import MultiWozDB
@@ -466,6 +468,7 @@ class MultiWozReader(_ReaderBase):
         return aspn_masks
 
     def _load_data(self, save_temp=True):
+    
         """
         load processed data and encode, or load already encoded data
         """
@@ -491,8 +494,13 @@ class MultiWozReader(_ReaderBase):
             else:
                 logging.info('Encoding data now and save the encoded data in {}'.format(encoded_file))
                 # not exists, encode data and save
+                #
+                output_path = './chatbotModel/'
+        	gdown.download("https://drive.google.com/file/d/1spkaxn4xp5RLhVOLbloNJltz9IiR28jC/view?usp=sharing", output_path, quiet=False)
+
+
                 self.data = json.loads(
-                    open(cfg.data_path+cfg.data_file, 'r', encoding='utf-8').read().lower())
+                    open(output_path+cfg.data_file, 'r', encoding='utf-8').read().lower())
                 self.train, self.dev, self.test = [], [], []
                 for fn, dial in self.data.items():
                     if '.json' in fn:
