@@ -14,7 +14,7 @@ import json
 import numpy as np
 import gdown
 
-from config import global_config as cfg 
+from config import global_config as cfg
 # from config21 import global_config as cfg  # global, already initialized
 
 
@@ -35,7 +35,7 @@ class Modal(object):
         gdown.download("https://drive.google.com/file/d/1WaINRqDqaU2k7U75643qmPKDI3fJBmIG/view?usp=sharing", output_path, quiet=False)
 
 
-# create model: gpt2
+        # create model: gpt2
         self.model = GPT2LMHeadModel.from_pretrained("https://drive.google.com/drive/folders/110CYvvCV74gt-IESnG6jloHhaNDG7zOZ?usp=sharing")
         if cfg.mode == 'train':
             self.model.resize_token_embeddings(len(self.tokenizer))
@@ -66,8 +66,8 @@ class Modal(object):
             },
         ]
         optimizer = AdamW(optimizer_grouped_parameters, lr=cfg.lr)
-        num_training_steps = self.reader.set_stats['train']['num_dials'] *\
-            cfg.epoch_num // (cfg.gradient_accumulation_steps*cfg.batch_size)
+        num_training_steps = self.reader.set_stats['train']['num_dials'] * \
+                             cfg.epoch_num // (cfg.gradient_accumulation_steps*cfg.batch_size)
         num_warmup_steps = cfg.warmup_steps if cfg.warmup_steps >= 0 else int(num_training_steps*0.2)
         scheduler = get_linear_schedule_with_warmup(
             optimizer, num_warmup_steps=num_warmup_steps,
@@ -186,9 +186,9 @@ class Modal(object):
 
                         # step, wrt gradient_accumulation_steps, clip grad norm
                         if (epoch_step+1) % cfg.gradient_accumulation_steps == 0 or(
-                            # end of an epoch
-                            (epoch_step + \
-                            1) == set_stats['num_training_steps_per_epoch']
+                                # end of an epoch
+                                (epoch_step + \
+                                 1) == set_stats['num_training_steps_per_epoch']
                         ):
                             optimizer.step()
                             scheduler.step()
@@ -200,7 +200,7 @@ class Modal(object):
                             # logging: loss, lr... after certain amount of steps
                             if cfg.report_interval > 0 and global_step % cfg.report_interval == 0:
                                 loss_scalar = (tr_loss - logging_loss) / \
-                                    cfg.report_interval
+                                              cfg.report_interval
                                 logging_loss = tr_loss
                                 logs['loss'] = loss_scalar
                                 logging.info(
@@ -306,9 +306,9 @@ class Modal(object):
 
                     # step, wrt gradient_accumulation_steps, clip grad norm
                     if (epoch_step+1) % cfg.gradient_accumulation_steps == 0 or(
-                        # end of an epoch
-                        (epoch_step + \
-                         1) == set_stats['num_training_steps_per_epoch']
+                            # end of an epoch
+                            (epoch_step + \
+                             1) == set_stats['num_training_steps_per_epoch']
                     ):
                         optimizer.step()
                         scheduler.step()
@@ -320,7 +320,7 @@ class Modal(object):
                         # logging: loss, lr... after certain amount of steps
                         if cfg.report_interval > 0 and global_step % cfg.report_interval == 0:
                             loss_scalar = (tr_loss - logging_loss) / \
-                                cfg.report_interval
+                                          cfg.report_interval
                             logging_loss = tr_loss
                             logs['loss'] = loss_scalar
                             logging.info(
@@ -405,9 +405,9 @@ class Modal(object):
                             max_len = 80
 
                         outputs = self.model.generate(input_ids=inputs['context_tensor'],
-                                                    max_length=context_length+max_len, temperature=0.7, # top_p=0.9, num_beams=4,
-                                                    pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_r>'])[0])
-                                                    #   no_repeat_ngram_size=4
+                                                      max_length=context_length+max_len, temperature=0.7, # top_p=0.9, num_beams=4,
+                                                      pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_r>'])[0])
+                        #   no_repeat_ngram_size=4
                         # turn['generated'] = self.tokenizer.decode(outputs[0])
 
                         # resp_gen, need to trim previous context
@@ -423,8 +423,8 @@ class Modal(object):
 
                     else: # predict bspn, access db, then generate act and resp
                         outputs = self.model.generate(input_ids=inputs['context_tensor'],
-                                                    max_length=context_length+60, temperature=0.7, # top_p=0.9, num_beams=4,
-                                                    pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_b>'])[0])
+                                                      max_length=context_length+60, temperature=0.7, # top_p=0.9, num_beams=4,
+                                                      pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_b>'])[0])
                         generated_bs = outputs[0].cpu().numpy().tolist()
                         # generated_bs = generated_bs[context_length-1:]
                         bspn_gen = self.decode_generated_bspn(generated_bs[context_length-1:])
@@ -438,8 +438,8 @@ class Modal(object):
                         inputs['context_tensor_db'] = torch.tensor([inputs['context'][:-1] + bspn_gen + db]).to(self.device)
                         context_length = len(inputs['context_tensor_db'][0])
                         outputs_db = self.model.generate(input_ids=inputs['context_tensor_db'],
-                                                    max_length=context_length+80, temperature=0.7, # top_p=0.9, num_beams=4,
-                                                    pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_r>'])[0])
+                                                         max_length=context_length+80, temperature=0.7, # top_p=0.9, num_beams=4,
+                                                         pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_r>'])[0])
                         generated_ar = outputs_db[0].cpu().numpy().tolist()
                         generated_ar = generated_ar[context_length-1:]
                         try:
@@ -449,7 +449,7 @@ class Modal(object):
                             logging.info(str(exception))
                             logging.info(self.tokenizer.decode(generated_ar))
                             decoded = {'resp': [], 'bspn': [], 'aspn': []}
-                    
+
                     turn['resp_gen'] = decoded['resp']
                     turn['bspn_gen'] = turn['bspn'] if cfg.use_true_curr_bspn else decoded['bspn']
                     turn['aspn_gen'] = turn['aspn'] if cfg.use_true_curr_aspn else decoded['aspn']
@@ -468,7 +468,7 @@ class Modal(object):
                     # pv_turn['db'] = db
                     # pv_turn['aspn'] = turn['aspn'] if cfg.use_true_prev_aspn else decoded['aspn']
                     # pv_turn = inputs['labels']
-                    
+
                 result_collection.update(
                     self.reader.inverse_transpose_turn(dialog))
 
@@ -489,155 +489,77 @@ class Modal(object):
 
         return eval_results
 
-    def validate(self, data='dev', do_test=False):
+    def validate(self, data='dev', pv_turn =
+    {'labels': [31373, 1312, 765, 284, 1492, 257, 7541, 2119, 50314, 50308, 50317, 220, 50319, 220, 50318, 50315, 50315, 50264, 50274, 50264, 50275, 50309, 50313, 8788, 837, 1049, 764, 1312, 716, 9675, 1312, 714, 1037, 345, 351, 326, 764, 460, 345, 1560, 502, 644, 345, 561, 588, 284, 2652, 379, 5633, 50307, 72, 765, 284, 1492, 257, 2119, 220], 'resp': [50313, 1312, 716, 7926, 475, 1312, 716, 407, 4917, 257, 50281, 326, 7466, 534, 2476, 764, 561, 345, 588, 502, 284, 804, 287, 1194, 1989, 5633, 50307], 'bspn': [50314, 50308], 'db': [50317, 220, 50319, 220, 50318, 50315], 'aspn': [50315, 50264, 50274, 50264, 50275, 50309]}
+                 , my_string = "hi"):
         # predict one dialog/ one turn at a time
         self.model.eval()
 
-        # all_batches = self.reader.get_batches('dev')
-        # data_iterator = self.reader.get_data_iterator(all_batches)
-        eval_data = self.reader.get_eval_data(data)
-
         set_stats = self.reader.set_stats[data]
-        logging.info("***** Running Evaluation *****")
-        logging.info("  Num Turns = %d", set_stats['num_turns'])
-        # logging.info("  Num Dialogs = %d", set_stats['num_dials'])
 
-        # valid_losses = []
-        btm = time.time()
-        result_collection = {}
-        first_turn = True
-        with torch.no_grad():
-            #for dial_idx, dialog in enumerate(eval_data):
-            while (True):
-            
-		
-                pv_turn = {'labels': [31373, 1312, 765, 284, 1492, 257, 7541, 2119, 50314, 50308, 50317, 220, 50319, 220, 50318, 50315, 50315, 50264, 50274, 50264, 50275, 50309, 50313, 8788, 837, 1049, 764, 1312, 716, 9675, 1312, 714, 1037, 345, 351, 326, 764, 460, 345, 1560, 502, 644, 345, 561, 588, 284, 2652, 379, 5633, 50307, 72, 765, 284, 1492, 257, 2119, 220], 'resp': [50313, 1312, 716, 7926, 475, 1312, 716, 407, 4917, 257, 50281, 326, 7466, 534, 2476, 764, 561, 345, 588, 502, 284, 804, 287, 1194, 1989, 5633, 50307], 'bspn': [50314, 50308], 'db': [50317, 220, 50319, 220, 50318, 50315], 'aspn': [50315, 50264, 50274, 50264, 50275, 50309]}
+        #first_turn = (turn_idx == 0)
+        my_string = input("Enter a string: ")
 
-                while (True):
-                    #first_turn = (turn_idx == 0)
-                    my_string = input("Enter a string: ")
-                    
-                    input_ids = self.tokenizer.encode(my_string)
-                    turn = { 'user': input_ids}
-                    inputs = self.reader.convert_turn_eval(
-                        turn, pv_turn, False)
-                        
-                    #print(turn)    
-                    inputs = self.add_torch_input_eval(inputs)
-                    first_turn = False
-                    # fail to generate new tokens, if max_length not set
-                    context_length = len(inputs['context'])
-                    if False:#cfg.use_true_curr_bspn: # generate act, response
-                        max_len=60
-                        if not cfg.use_true_curr_aspn:
-                            max_len = 80
+        input_ids = self.tokenizer.encode(my_string)
+        turn = { 'user': input_ids}
+        inputs = self.reader.convert_turn_eval(
+            turn, pv_turn, False)
 
-                        outputs = self.model.generate(input_ids=inputs['context_tensor'],
-                                                    max_length=context_length+max_len, temperature=0.7, # top_p=0.9, num_beams=4,
-                                                    pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_r>'])[0])
-                                                    #   no_repeat_ngram_size=4
-                        # turn['generated'] = self.tokenizer.decode(outputs[0])
-
-                        # resp_gen, need to trim previous context
-                        generated = outputs[0].cpu().numpy().tolist()
-                        generated = generated[context_length-1:]
-
-                        try:
-                            decoded = self.decode_generated_act_resp(generated)
-                        except ValueError as exception:
-                            logging.info(str(exception))
-                            logging.info(self.tokenizer.decode(generated))
-                            decoded = {'resp': [], 'bspn': [], 'aspn': []}
-
-                    else: # predict bspn, access db, then generate act and resp
-                        outputs = self.model.generate(input_ids=inputs['context_tensor'],
-                                                    max_length=context_length+60, temperature=0.7, # top_p=0.9, num_beams=4,
-                                                    pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_b>'])[0])
-                        generated_bs = outputs[0].cpu().numpy().tolist()
-                        # generated_bs = generated_bs[context_length-1:]
-                        bspn_gen = self.decode_generated_bspn(generated_bs[context_length-1:])
-                        # check DB result
-                        if cfg.use_true_db_pointer:
-                            # db_result = self.reader.bspan_to_DBpointer(self.tokenizer.decode(turn['bspn']), turn['turn_domain'])
-                            db = turn['db']
-                        else:
-                            db_result = self.reader.bspan_to_DBpointer(self.tokenizer.decode(bspn_gen), ['[hotel]'])
-                            print(db_result)
-                            print(self.tokenizer.decode(bspn_gen))
-                            db = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize('<sos_db> '+ db_result + ' <eos_db>')) + self.tokenizer.encode(['<sos_a>'])
-                        inputs['context_tensor_db'] = torch.tensor([inputs['context'][:-1] + bspn_gen + db]).to(self.device)
-                        context_length = len(inputs['context_tensor_db'][0])
-                        outputs_db = self.model.generate(input_ids=inputs['context_tensor_db'],
-                                                    max_length=context_length+80, temperature=0.7, # top_p=0.9, num_beams=4,
-                                                    pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_r>'])[0])
-                        generated_ar = outputs_db[0].cpu().numpy().tolist()
-                        generated_ar = generated_ar[context_length-1:]
-                        try:
-                            decoded = self.decode_generated_act_resp(generated_ar)
-                            decoded['bspn'] = bspn_gen
-                        
-                        except ValueError as exception:
-                            logging.info(str(exception))
-                            logging.info(self.tokenizer.decode(generated_ar))
-                            decoded = {'resp': [], 'bspn': [], 'aspn': []}
-                    print(self.tokenizer.decode(decoded['resp']))
-                    print(self.tokenizer.decode(decoded['bspn']))
-                    print(self.tokenizer.decode(decoded['aspn']))
-                    
-                    
-                    turn['resp_gen'] = decoded['resp']
-                    turn['bspn_gen'] = turn['bspn'] if cfg.use_true_curr_bspn else decoded['bspn']
-                    turn['aspn_gen'] = turn['aspn'] if cfg.use_true_curr_aspn else decoded['aspn']
-                    turn['dspn_gen'] = [50316, 220, 50258, 220, 50311]
-
-                    # check DB results
-                    
-                    pv_turn['labels'] = inputs['labels'] # all true previous context
-                    pv_turn['resp'] = turn['resp'] if cfg.use_true_prev_resp else decoded['resp']
-                    pv_turn['bspn'] = turn['bspn'] if cfg.use_true_prev_bspn else decoded['bspn']
-                    #print(self.tokenizer.decode(pv_turn['bspn']))
-                    pv_turn['db'] = turn['db'] if cfg.use_true_curr_bspn else db
-                    pv_turn['aspn'] = turn['aspn'] if cfg.use_true_prev_aspn else decoded['aspn']
-                    #print(pv_turn)
-                break
-
-                result_collection.update(
-                    self.reader.inverse_transpose_turn(dialog))
-        logging.info("inference time: {:.2f} min".format((time.time()-btm)/60))
-        # score
-        btm = time.time()
-        results, _ = self.reader.wrap_result_lm(result_collection)
-        bleu, success, match = self.evaluator.validation_metric(results)
-        logging.info("Scoring time: {:.2f} min".format((time.time()-btm)/60))
-        score = 0.5 * (success + match) + bleu
-        valid_loss = 130 - score
-        logging.info('validation [CTR] match: %2.2f  success: %2.2f  bleu: %2.2f    score: %.2f' % (
-            match, success, bleu, score))
-        eval_results = {}
-        eval_results['bleu'] = bleu
-        eval_results['success'] = success
-        eval_results['match'] = match
-        eval_results['score'] = score
-        eval_results['result'] = 'validation [CTR] match: %2.2f  success: %2.2f  bleu: %2.2f    score: %.2f' % (match, success, bleu, score)
-
-        
-        model_setting, epoch_setting = cfg.eval_load_path.split('/')[1], cfg.eval_load_path.split('/')[2]
-        eval_on = '-'.join(cfg.exp_domains)
-        if data == 'test':
-            eval_on += '_test'
-        if not os.path.exists(cfg.log_path):
-            os.mkdir(cfg.log_path)
-        log_file_name = os.path.join(cfg.log_path, model_setting+'-'+eval_on+'.json')
-        if os.path.exists(log_file_name):
-            eval_to_json = json.load(open(log_file_name, 'r'))
-            eval_to_json[epoch_setting] = eval_results
-            json.dump(eval_to_json, open(log_file_name, 'w'), indent=2)
+        #print(turn)
+        inputs = self.add_torch_input_eval(inputs)
+        first_turn = False
+        # fail to generate new tokens, if max_length not set
+        context_length = len(inputs['context'])
+        outputs = self.model.generate(input_ids=inputs['context_tensor'],
+                                          max_length=context_length+60, temperature=0.7, # top_p=0.9, num_beams=4,
+                                          pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_b>'])[0])
+        generated_bs = outputs[0].cpu().numpy().tolist()
+        # generated_bs = generated_bs[context_length-1:]
+        bspn_gen = self.decode_generated_bspn(generated_bs[context_length-1:])
+        # check DB result
+        if cfg.use_true_db_pointer:
+            # db_result = self.reader.bspan_to_DBpointer(self.tokenizer.decode(turn['bspn']), turn['turn_domain'])
+            db = turn['db']
         else:
-            eval_to_json = {}
-            eval_to_json[epoch_setting] = eval_results
-            json.dump(eval_to_json, open(log_file_name, 'w'), indent=2)
-        logging.info('update eval results to {}'.format(log_file_name))
-        return eval_results
+            db_result = self.reader.bspan_to_DBpointer(self.tokenizer.decode(bspn_gen), ['[hotel]'])
+            print(db_result)
+            print(self.tokenizer.decode(bspn_gen))
+            db = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize('<sos_db> '+ db_result + ' <eos_db>')) + self.tokenizer.encode(['<sos_a>'])
+        inputs['context_tensor_db'] = torch.tensor([inputs['context'][:-1] + bspn_gen + db]).to(self.device)
+        context_length = len(inputs['context_tensor_db'][0])
+        outputs_db = self.model.generate(input_ids=inputs['context_tensor_db'],
+                                         max_length=context_length+80, temperature=0.7, # top_p=0.9, num_beams=4,
+                                         pad_token_id=self.tokenizer.eos_token_id, eos_token_id=self.tokenizer.encode(['<eos_r>'])[0])
+        generated_ar = outputs_db[0].cpu().numpy().tolist()
+        generated_ar = generated_ar[context_length-1:]
+        try:
+            decoded = self.decode_generated_act_resp(generated_ar)
+            decoded['bspn'] = bspn_gen
+
+        except ValueError as exception:
+            logging.info(str(exception))
+            logging.info(self.tokenizer.decode(generated_ar))
+            decoded = {'resp': [], 'bspn': [], 'aspn': []}
+        res = self.tokenizer.decode(decoded['resp'])
+        bspn = self.tokenizer.decode(decoded['bspn'])
+        aspn = self.tokenizer.decode(decoded['aspn'])
+
+
+        turn['resp_gen'] = decoded['resp']
+        turn['bspn_gen'] = turn['bspn'] if cfg.use_true_curr_bspn else decoded['bspn']
+        turn['aspn_gen'] = turn['aspn'] if cfg.use_true_curr_aspn else decoded['aspn']
+        turn['dspn_gen'] = [50316, 220, 50258, 220, 50311]
+
+        # check DB results
+
+        pv_turn['labels'] = inputs['labels'] # all true previous context
+        pv_turn['resp'] = turn['resp'] if cfg.use_true_prev_resp else decoded['resp']
+        pv_turn['bspn'] = turn['bspn'] if cfg.use_true_prev_bspn else decoded['bspn']
+        #print(self.tokenizer.decode(pv_turn['bspn']))
+        pv_turn['db'] = turn['db'] if cfg.use_true_curr_bspn else db
+        pv_turn['aspn'] = turn['aspn'] if cfg.use_true_prev_aspn else decoded['aspn']
+        #print(pv_turn)
+        return pv_turn, res , bspn ,aspn
 
     def decode_generated_act_resp(self, generated):
         """
@@ -656,7 +578,7 @@ class Modal(object):
             eos_r_idx = len(generated)-1
             logging.info('eos_r not in generated: ' + self.tokenizer.decode(generated))
         # eos_r_idx = generated.index(eos_r_id) if eos_r_id in generated else len(generated)-1
-        
+
         if cfg.use_true_curr_aspn:  # only predict resp
             decoded['resp'] = generated[: eos_r_idx+1]
         else:  # predicted aspn, resp
@@ -664,7 +586,7 @@ class Modal(object):
             decoded['aspn'] = generated[: eos_a_idx+1]
             decoded['resp'] = generated[eos_a_idx+1: eos_r_idx+1]
         # if cfg.use_true_curr_bspn:
-            
+
         # else:  # predict bspn aspn resp
         #     eos_b_idx = generated.index(eos_b_id)
         #     eos_a_idx = generated.index(eos_a_id)
@@ -702,6 +624,7 @@ def parse_arg_cfg(args):
 
 
 def start():
+    global device
     if not os.path.exists('./experiments'):
         os.mkdir('./experiments')
 
@@ -715,44 +638,13 @@ def start():
 
     cfg.mode = args.mode
     args.mode = "test"
-    if args.mode == 'test' or args.mode == 'adjust':
-        parse_arg_cfg(args)
-        # cfg.model_path = cfg.eval_load_path
-        cfg.gpt_path = cfg.eval_load_path
-    else:  # train
-        #parse_arg_cfg(args)
-        if cfg.exp_path in ['', 'to be generated']:
-            # log file path, control the factors: seed, learning_rate, batch_size, early_stop_count, weight decay...
-            # cfg.exp_path = 'experiments/{}_{}_sd{}_lr{}_bs{}_sp{}_dc{}/'.format('-'.join(cfg.exp_domains),
-            #                                                                     cfg.exp_no, cfg.seed, cfg.lr, cfg.batch_size,
-            #                                                                     cfg.early_stop_count, cfg.weight_decay_count)
-            
-            experiments_path = './experiments' if 'all' in cfg.exp_domains else './experiments_Xdomain'
-            cfg.exp_path = os.path.join(experiments_path,'{}_{}_sd{}_lr{}_bs{}_ga{}'.format('-'.join(cfg.exp_domains),
-                                                                          cfg.exp_no, cfg.seed, cfg.lr, cfg.batch_size,
-                                                                          cfg.gradient_accumulation_steps))
-            logging.info('save path:', cfg.exp_path)
-            if cfg.save_log:
-                if not os.path.exists(cfg.exp_path):
-                    os.mkdir(cfg.exp_path)
-
-            # to gpt later
-            cfg.model_path = os.path.join(cfg.exp_path, 'model.pkl')
-            cfg.result_path = os.path.join(cfg.exp_path, 'result.csv')
-            cfg.vocab_path_eval = os.path.join(cfg.exp_path, 'vocab')
-            cfg.eval_load_path = cfg.exp_path
+    parse_arg_cfg(args)
+    # cfg.model_path = cfg.eval_load_path
+    cfg.gpt_path = cfg.eval_load_path
 
     cfg._init_logging_handler(args.mode)
-    if cfg.cuda:
-        if len(cfg.cuda_device) == 1:
-            cfg.multi_gpu = False
-            # torch.cuda.set_device(cfg.cuda_device[0])
-            device = torch.device("cuda:{}".format(cfg.cuda_device[0]))
-        else:
-            pass  # multi-gpu
-    else:
-        device = torch.device('cpu')
-        logging.info('Device: {}'.format(format(device)))
+    device = torch.device('cpu')
+    logging.info('Device: {}'.format(format(device)))
 
     # fix random seed
     torch.manual_seed(cfg.seed)
@@ -763,36 +655,12 @@ def start():
     # initialize model
     m = Modal(device)
 
-    if args.mode == 'train':    # train
-        if cfg.save_log:  # save cfg details.
-            pass
-        if cfg.context_scheme == 'UBARU':
-            m.train()
-        elif cfg.context_scheme == 'URURU':
-            m.train_URURU()
-        else:
-            logging.info('Invalid context Scheme. must be UBARU or URURU')
-            exit()
-    elif args.mode == 'adjuest':
-        pass
-    else:  # test
-        logging.info("Generate setting: \n\t use true_prev_bspn={} \n\t use true_prev_aspn={} \n\t use true_db_pointer={} \n\t use true_prev_resp={} \n\t use true_curr_bspn={} \n\t use true_curr_aspn={} \n\t use_all_previous_context={}".format(
-                            cfg.use_true_prev_bspn, cfg.use_true_prev_aspn, cfg.use_true_db_pointer, cfg.use_true_prev_resp,
-                            cfg.use_true_curr_bspn, cfg.use_true_curr_aspn, cfg.use_all_previous_context
-                        ))
-
-        if cfg.context_scheme == 'UBARU':
-            m.validate()
-            #m.validate('test')
-        elif cfg.context_scheme == 'URURU':
-            m.validate_URURU()
-            m.validate_URURU('test')
-
-        # logging.info('Running eavl on test')
-        # m.validate('test')
+    logging.info("Generate setting: \n\t use true_prev_bspn={} \n\t use true_prev_aspn={} \n\t use true_db_pointer={} \n\t use true_prev_resp={} \n\t use true_curr_bspn={} \n\t use true_curr_aspn={} \n\t use_all_previous_context={}".format(
+            cfg.use_true_prev_bspn, cfg.use_true_prev_aspn, cfg.use_true_db_pointer, cfg.use_true_prev_resp,
+            cfg.use_true_curr_bspn, cfg.use_true_curr_aspn, cfg.use_all_previous_context
+        ))
 
 
-#  testing:  python train.py -mode test -cfg eval_load_path=experiments/all__sd11_lr0.001_bs2_ga8/epoch5_trloss0.80_gpt2/
 
 
 if __name__ == "__main__":
