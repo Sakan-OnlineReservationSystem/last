@@ -472,7 +472,9 @@ class MultiWozReader(_ReaderBase):
         """
         load processed data and encode, or load already encoded data
         """
-        if save_temp: # save encoded data
+	    
+        return
+	if save_temp: # save encoded data
             if 'all' in cfg.exp_domains:
                 encoded_file = os.path.join(cfg.data_path, 'new_db_se_blank_encoded.data.json') 
                 # encoded: no sos, se_encoded: sos and eos
