@@ -21,6 +21,7 @@ app.get('/:message', async (req, res) => {
 app.listen(PORT, async () => {
   try {
     np = await python('./train.py'); // Assuming './train.py' is your Python script and it exports the necessary functionality
+    np.start()
     console.log(`Server listening on port ${PORT}`);
   } catch (error) {
     console.error('Error starting Python process:', error.message);
