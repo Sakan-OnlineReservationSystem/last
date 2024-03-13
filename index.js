@@ -11,7 +11,7 @@ app.get('/:message', async (req, res) => {
     // Correctly destructure the result from the Python call
     // The original line had syntax errors and was not properly destructuring the object returned from the Python function.
     // Assuming 'validate' is a method of the Python object that returns an object with pvturn, res, bspn, and aspn properties.
-    let { pvturn, res, bspn, aspn } = await np.validate(mystring = mystring);
+    { pv_turn, res , bspn ,aspn } = await np.validate(mystring = mystring);
     console.log(result); // Log the validation result
     console.log(bspn); // Log additional information
     console.log(aspn); // Log additional information
