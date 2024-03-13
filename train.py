@@ -36,7 +36,7 @@ class Modal(object):
 
 
         # create model: gpt2
-        self.model = GPT2LMHeadModel.from_pretrained("https://drive.google.com/drive/folders/110CYvvCV74gt-IESnG6jloHhaNDG7zOZ?usp=sharing")
+        self.model = GPT2LMHeadModel.from_pretrained(output_path)
         if cfg.mode == 'train':
             self.model.resize_token_embeddings(len(self.tokenizer))
         self.model.to(self.device)  # single gpu
