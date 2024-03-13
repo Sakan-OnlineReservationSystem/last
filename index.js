@@ -11,10 +11,8 @@ app.get('/:message', async (req, res) => {
     // Correctly destructure the result from the Python call
     // The original line had syntax errors and was not properly destructuring the object returned from the Python function.
     // Assuming 'validate' is a method of the Python object that returns an object with pvturn, res, bspn, and aspn properties.
-    { pv_turn, res , bspn ,aspn } = await np.validate(mystring = mystring);
-    console.log(result); // Log the validation result
-    console.log(bspn); // Log additional information
-    console.log(aspn); // Log additional information
+    let result = await np.validate(mystring = mystring);
+    console.log(await result['res']); // Log the validation result
     // Use a different variable name for the response from express to avoid naming conflict with the destructured 'res' from the Python result.
     res.send(result); // Send the result back to the client
   } catch (error) {
