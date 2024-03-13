@@ -9,7 +9,7 @@ app.get('/:message', async (req, res) => {
   try {
     const myString = req.params.message; // Good practice to use camelCase in JavaScript
     // Assuming 'validate' is a method of the Python object that directly accepts the message argument
-    let result = await np.validate(myString);
+    let result = await np.validate(myString = myString);
     console.log(result.res); // If result is an object and res a property, no need for await
     res.send(result); // Send the result back to the client
   } catch (error) {
