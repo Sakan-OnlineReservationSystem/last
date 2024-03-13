@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "py": "pip install -r requirements.txt",
+    "sp": "python -m spacy download en_core_web_sm",
     "start": "node index.js"  
   },
   "keywords": [],
