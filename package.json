@@ -1,0 +1,17 @@
+{
+  "name": "loadbalancer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "py": "pip install -r requirements.txt",
+    "start": "node index.js"  
+  },
+  "keywords": [],
+  "dependencies": {
+    "express": "^4.18.3",
+    "pythonia": "^1.1.3"
+  },
+  "author": "",
+  "license": "ISC"
+}
