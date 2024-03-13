@@ -7,27 +7,20 @@ let np = null;
 
 app.get('/:message', async (req, res) => {
   try {
-    const mystring = req.params.message; // Extract the 'message' parameter from the URL
-    // Correctly destructure the result from the Python call
-    // The original line had syntax errors and was not properly destructuring the object returned from the Python function.
-    // Assuming 'validate' is a method of the Python object that returns an object with pvturn, res, bspn, and aspn properties.
-    let result = await np.validate(mystring = mystring);
-    console.log(await result['res']); // Log the validation result
-    // Use a different variable name for the response from express to avoid naming conflict with the destructured 'res' from the Python result.
+    const myString = req.params.message; // Good practice to use camelCase in JavaScript
+    // Assuming 'validate' is a method of the Python object that directly accepts the message argument
+    let result = await np.validate(myString);
+    console.log(result.res); // If result is an object and res a property, no need for await
     res.send(result); // Send the result back to the client
   } catch (error) {
     console.error('Error:', error.message);
-    // Correct response method usage to handle errors gracefully.
     res.status(500).send('Internal Server Error');
   }
 });
 
 app.listen(PORT, async () => {
   try {
-    // The 'python' function is used to load and start the Python process
-    np = await python('./train.py'); // Assuming './train.py' is your Python script
-    // The following 'start' method was assumed to exist. If your Python script doesn't have a 'start' method, you might need to remove this line.
-    // await np.start(); // Removed this line as the pythonia library doesn't require explicitly starting the process after initialization.
+    np = await python('./train.py'); // Assuming './train.py' is your Python script and it exports the necessary functionality
     console.log(`Server listening on port ${PORT}`);
   } catch (error) {
     console.error('Error starting Python process:', error.message);
