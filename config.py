@@ -5,7 +5,7 @@ class _Config:
         self._multiwoz_damd_init()
 
     def _multiwoz_damd_init(self):
-        self.gpt_path = '/experiments/all_0729_sd11_lr0.0001_bs2_ga16/epoch43_trloss0.56_gpt2'
+        self.gpt_path = './experiments/all_0729_sd11_lr0.0001_bs2_ga16/epoch43_trloss0.56_gpt2'
 
         self.vocab_path_train = './data/multi-woz-processed/vocab'
         self.vocab_path_eval = None
