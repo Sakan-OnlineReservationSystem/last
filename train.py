@@ -35,7 +35,7 @@ class Modal(object):
         
         # Attempt to download the file
         try:
-            gdown.download(download_url, output_path, quiet=False)
+            #gdown.download(download_url, output_path, quiet=False)
             # Check if the file is downloaded successfully
             if not os.path.isfile(output_path):
                 raise FileNotFoundError(f"Download failed, file not found: {output_path}")
