@@ -52,7 +52,7 @@ class Modal(object):
         
 
         # create model: gpt2
-        self.model = GPT2LMHeadModel.from_pretrained(output_path)
+        self.model = GPT2LMHeadModel.from_pretrained(cfg.gpt_path)
         if cfg.mode == 'train':
             self.model.resize_token_embeddings(len(self.tokenizer))
         self.model.to(self.device)  # single gpu
@@ -511,10 +511,8 @@ class Modal(object):
         # predict one dialog/ one turn at a time
         #self.model.eval()
 
-        set_stats = self.reader.set_stats[data]
+        #set_stats = self.reader.set_stats[data]
 
-        #first_turn = (turn_idx == 0)
-        my_string = input("Enter a string: ")
 
         input_ids = self.tokenizer.encode(my_string)
         turn = { 'user': input_ids}
@@ -580,7 +578,7 @@ class Modal(object):
             'bspn': bspn,
             'aspn': aspn
         }
-             
+
         return result
 
     def decode_generated_act_resp(self, generated):
@@ -679,7 +677,7 @@ def start():
     m = Modal(device)
 
 def validate(mystring):
-    return m.validate(mystring = mystring)
+    return m.validate(my_string = mystring)
 
 device = torch.device('cpu')
 m = None 
